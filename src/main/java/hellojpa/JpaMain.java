@@ -30,6 +30,7 @@ public class JpaMain {
         }
     }
 
+
     // CREATE
     private static void createMember(EntityManager em) {
         //JPA에서는 꼭 트렌젝션을 해야함.
@@ -40,7 +41,10 @@ public class JpaMain {
             member.setId(1L); // ID는 수동 설정. 자동화 가능.
             member.setName("HelloA");
 
+            //영속성을 해주면 캐시에서 조회 -> 영속성 없으면 DB에서 조회
             em.persist(member);
+            // 영속성을 끊으려면 이렇게 하면 됨.
+            //em.detach(member);
             tx.commit();
             System.out.println("✅ CREATE 완료");
 
@@ -77,7 +81,7 @@ public class JpaMain {
         try {
             Member memberToUpdate = em.find(Member.class, id);
             if (memberToUpdate != null) {
-                memberToUpdate.setName(newName); // JPA는 변경 감지를 통해 자동 update
+                memberToUpdate.setName(newName); // JPA는 변경 감지를 통해 자동 update -> persist 안해도 됨.
                 tx.commit();
                 System.out.println("✅ UPDATE 완료: " + newName);
             } else {
@@ -97,7 +101,8 @@ public class JpaMain {
         try {
             Member memberToDelete = em.find(Member.class, id);
             if (memberToDelete != null) {
-                em.remove(memberToDelete); // 삭제
+                em.remove(memberToDelete); // 삭제 예약
+                //commit으로 삭제됨
                 tx.commit();
                 System.out.println("✅ DELETE 완료");
             } else {
